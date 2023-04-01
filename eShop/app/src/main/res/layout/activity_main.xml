@@ -4,20 +4,77 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="#283739 "
     android:orientation="vertical"
     android:padding="16dp">
 
     <Button
         android:id="@+id/camera_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="232dp"
+        android:layout_height="82dp"
         android:layout_marginTop="500dp"
-        android:backgroundTint="#283739"
+        android:backgroundTint="#A9C52F "
         android:text="Open Camera"
-        app:icon="@drawable/ic_launcher_foreground"
+        app:icon="@drawable/baseline_camera_enhance_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.519"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.429" />
+
+    <ImageButton
+        android:id="@+id/shopping_cart"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="#A8C42F"
+        android:contentDescription="Shopping Cart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/shopping_cart" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="256dp"
+        android:layout_height="235dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="104dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.037"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/eshop_logo" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="154dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="116dp"
+        android:layout_marginTop="344dp"
+        android:fontFamily="@font/advent_pro_thin"
+        android:text="eShop"
+        android:textAlignment="center"
+        android:textColor="#A9C52F"
+        android:textSize="48sp"
+        app:flow_wrapMode="aligned"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="263dp"
+        android:layout_height="77dp"
+        android:layout_marginStart="58dp"
+        android:layout_marginTop="408dp"
+        android:fontFamily="@font/advent_pro_thin"
+        android:text="Sustainability in your Pocket: Scan barcodes to view a product's sustainability score"
+        android:textAlignment="center"
+        android:textColor="#A8C42F"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.177"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
