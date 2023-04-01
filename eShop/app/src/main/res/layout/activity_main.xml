@@ -68,7 +68,7 @@
         android:layout_height="77dp"
         android:layout_marginStart="58dp"
         android:layout_marginTop="408dp"
-        android:fontFamily="@font/advent_pro_thin"
+        android:fontFamily="@font/roboto_thin"
         android:text="Sustainability in your Pocket: Scan barcodes to view a product's sustainability score"
         android:textAlignment="center"
         android:textColor="#A8C42F"
