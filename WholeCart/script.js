@@ -13,4 +13,5 @@ function getAPI() {
 
 function myFunc(Result) {
     document.getElementById("resulttext").innerHTML = Result
+    console.log(Result)
 }
