@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>TrashBot</title>
+    </head>
+    <body>
+        <div class="header" id="header">
+            <img src = "eShop-logo.png" alt = ""  class = "logo">
+            <h1>eShop</h1>
+        </div>
+        <br>
+        <br>
+        <div class = "button1">
+            <button class="button-68" role="button" id = "cartButton" onclick = "Cart()">Open Cart</button>
+        </div>
+        <br>
+        <br>
+        <div id = "change" class = "button1">
+            
+        </div>
+
+    </body>
+    <script>
+        function Cart()
+        {
+            
+            if(document.getElementById('cartButton').innerText == "Open Cart") {
+                document.getElementById('cartButton').innerText = "Close Cart";
+                document.getElementById('change').innerHTML = makeTableHTML(updateDatabase());
+            } else {
+                document.getElementById('cartButton').innerText = "Open Cart";
+                document.getElementById('change').innerHTML = "";
+            }
+            
+        }
+        function updateDatabase() {
+            //query database for cart array, return it
+             return [[1, "Text"], [3, 4]];
+        }
+        function makeTableHTML(myArray) {
+            var result = "<table class = \"styled-table\"><thead><tr><th>Name</th><th>Average Grade</th></tr></thead><tbody>";
+                for(var i=0; i<myArray.length; i++) {
+                result += "<tr>";
+                    for(var j=0; j<myArray[i].length; j++){
+                         result += "<td>"+myArray[i][j]+"</td>";
+                }
+            result += "</tr>";
+        }
+        result += "</tbody>";
+        result += "</table>";
+        return result;
+        }
+    </script>
+</html>
