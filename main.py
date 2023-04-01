@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+import openai
 import psycopg2
 
 def openDB():
@@ -35,10 +36,6 @@ def executeUpdate(query, data):  # use this function for delete and update
 
 app = FastAPI()
 
-@app.get("/")
-async def root():
-    return {"Welcome to my silly little API"}
-
 @app.get("/WholeCart")
 async def WholeCart():
     openDB()
@@ -47,4 +44,39 @@ async def WholeCart():
                             ''')
     closeDB()
 
+# Data Sources
+@app.get("/getChatGPTResponse/{product_company}")
+async def getChatGPTResponse(product_company):
+    API_KEY="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"
+    prompt = f"On a scale of 1 to 13, what would you rate the sustainability of the company, {product_company}? Answer with only a single number, with nothing else in your response, including punctuation. Your response will only contain a single character. If you cannot access the most up-to-date information, try your best guess."
+    openai.api_key = API_KEY
+    response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+    )
+    grade = response['choices'][0]['message']['content']
+    return  {
+        "message": grade
+    }
 
+@app.get("/querySustainabilityDB/{upc}")
+async def querySustainabilityDB(upc):
+    return  {"message": f"todo"}
+
+# TODO
+@app.get("/crowdSourcedThing????/{upc}")
+async def crowdSourcedThing(upc):
+    return  {"message": f"todo"}
+
+# Get item info
+@app.get("/getItemInfo/{upc}")
+async def getItemInfo(upc):
+    # Get request to that one upc database
+	# store in string
+    return  {"message": f"todo"}
+
+# Add item to cart
+
+# Get cart item list
