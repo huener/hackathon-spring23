@@ -34,6 +34,7 @@ android {
 dependencies {
     // define a BOM and its version
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.10.0"))
+    implementation 'com.google.code.gson:gson:2.8.8'
 
     // define any required OkHttp artifacts without version
     implementation("com.squareup.okhttp3:okhttp")
