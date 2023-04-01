@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -33,6 +34,10 @@ public class ShoppingCartActivity extends AppCompatActivity {
     private ShoppingCartAdapter mAdapter;
     private List<String> mShoppingCartList;
 
+    private List<String> mShoppingCartList2;
+
+    private ShoppingCartAdapter mAdapter2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,8 +46,10 @@ public class ShoppingCartActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.shopping_cart_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mShoppingCartList = new ArrayList<>();
+        mShoppingCartList2 = new ArrayList<>();
 
         mAdapter = new ShoppingCartAdapter(mShoppingCartList);
+        mAdapter2 = new ShoppingCartAdapter(mShoppingCartList2);
         mRecyclerView.setAdapter(mAdapter);
 
         // Create an ItemTouchHelper that will handle swipe gestures
@@ -84,11 +91,25 @@ public class ShoppingCartActivity extends AppCompatActivity {
             mDataList = dataList;
         }
 
-        @Override
-        public ShoppingCartViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shopping_cart, parent, false);
-            return new ShoppingCartViewHolder(view);
+        public class ShoppingCartViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            public TextView itemNameTextView;
+
+            public ShoppingCartViewHolder(View itemView) {
+                super(itemView);
+                itemNameTextView = itemView.findViewById(R.id.item_name);
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View view) {
+                int position = getAdapterPosition();
+                String itemName = mDataList.get(position);
+                Intent intent = new Intent(view.getContext(), ScannedActivityAa.class);
+                intent.putExtra("itemName", itemName);
+                view.getContext().startActivity(intent);
+            }
         }
+
 
         @Override
         public void onBindViewHolder(ShoppingCartViewHolder holder, int position) {
@@ -101,14 +122,12 @@ public class ShoppingCartActivity extends AppCompatActivity {
             return mDataList.size();
         }
 
-        public class ShoppingCartViewHolder extends RecyclerView.ViewHolder {
-            public TextView itemNameTextView;
-
-            public ShoppingCartViewHolder(View itemView) {
-                super(itemView);
-                itemNameTextView = itemView.findViewById(R.id.item_name);
-            }
+        @Override
+        public ShoppingCartViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shopping_cart, parent, false);
+            return new ShoppingCartViewHolder(view);
         }
+
     }
 
     private class NetworkTask extends AsyncTask<Void, Void, String> {
@@ -173,6 +192,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
                 // Add the parsed result to the shopping cart list
                 mShoppingCartList.clear();
                 mShoppingCartList.addAll(resultList);
+                mShoppingCartList2.addAll(resultList2);
 
                 // Notify the adapter that the data has changed
                 mAdapter.notifyDataSetChanged();
