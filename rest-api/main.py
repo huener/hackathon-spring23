@@ -1,10 +1,129 @@
+#!/usr/bin/env python3
+
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+import json
+import requests
+import openai
+import psycopg2
+import uvicorn
+
+def openDB():
+    global conn
+    conn = psycopg2.connect(
+        user="postgres",
+        password="Ie0prHyD9JZS0hM7",
+        host="db.lroakeegvjazrfrsdccb.supabase.co",
+        port="5432"
+    )
+
+    global cursor
+    cursor = conn.cursor()
+
+origins = [
+    "http://api.arianb.me:8000",
+    "*"
+]
 
 app = FastAPI()
+openDB()
 
-@app.post("/getGPTResponse/{search}")
-async def getGPTResponse(search):
-    # Send API request to ChatGPT
-    # Store response in string
-    # Store letter grade in string
-    return  {"message": f"gpt response here + grade here in two strings"}
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+def closeDB():
+    cursor.close()
+    conn.close()
+
+def executeSelect(query):
+    cursor.execute(query)
+    return cursor.fetchall()
+
+def executeSelect2(query, data):
+    cursor.execute(query, data)
+    return cursor.fetchall()
+
+def insert(query, data):
+    cursor.execute(query, data)
+    conn.commit()
+
+def executeUpdate(query, data):  # use this function for delete and update
+    cursor.execute(query, data)
+    conn.commit()
+
+
+@app.get("/")
+async def root():
+    return {"Welcome to my silly little API"}
+
+@app.get("/WholeCart")
+async def WholeCart():
+    result = executeSelect('''
+                            SELECT * from "Cart"
+                            ''')
+    return  {"message": f"{result}"}
+
+# Data Sources
+@app.get("/getChatGPTResponse/")
+async def getChatGPTResponse(upc, company):
+    API_KEY="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"
+    prompt = f"On a scale of 1 to 13, what would you rate the sustainability of the company, {company}? Answer with only a single number, with nothing else in your response, including punctuation. Your response will only contain a single character. If you cannot access the most up-to-date information, try your best guess."
+    file = open("./key.txt", 'r')
+    openai.api_key = file.read()
+    response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+    )
+    grade = response['choices'][0]['message']['content']
+    return  {
+        "message": grade
+    }
+
+@app.get("/querySustainabilityDB/{upc}")
+async def querySustainabilityDB(upc):
+    return  {"message": f"todo"}
+
+# TODO
+@app.get("/crowdSourcedThing/{upc}")
+async def crowdSourcedThing(upc):
+    return  {"message": f"todo"}
+
+# Get item info
+@app.get("/getItemInfo/{upc}")
+async def getItemInfo(upc):
+    # Get request to that one upc database
+    response = requests.get(f"https://api.upcitemdb.com/prod/trial/lookup?upc={upc}")
+    response_json = response.json()
+
+    # Reduce response to what we need
+    data = {}
+
+    if not 'items' in response_json:
+        return {}
+
+    if len(response_json['items']) == 0:
+        return {}
+
+    data['brand'] = response_json['items'][0]['brand']
+    data['name'] = response_json['items'][0]['title']
+
+    if len(response_json['items'][0]['images']) == 0:
+        data['image'] = ""
+    else:
+        data['image'] = response_json['items'][0]['images'][0]
+
+    return json.dumps(data)
+
+# Add item to cart
+
+if __name__ == '__main__':
+    openDB()
+    uvicorn.run(app, port=8000, host='0.0.0.0')
+
