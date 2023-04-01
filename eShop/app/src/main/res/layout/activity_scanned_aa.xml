@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"
         android:fontFamily="@font/roboto_thin"
-        android:text="A+"
+        android:text="A"
         android:textColor="#F5F5F5"
         android:textSize="50sp"
         app:layout_constraintEnd_toEndOf="@+id/buttonDown"
