@@ -56,7 +56,7 @@ async def WholeCart():
 # Data Sources
 @app.get("/getChatGPTResponse/{product_company}")
 async def getChatGPTResponse(product_company):
-    API_KEY="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"
+    API_KEY="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"
     prompt = f"On a scale of 1 to 13, what would you rate the sustainability of the company, {product_company}? Answer with only a single number, with nothing else in your response, including punctuation. Your response will only contain a single character. If you cannot access the most up-to-date information, try your best guess."
     openai.api_key = API_KEY
     response = openai.ChatCompletion.create(
@@ -84,18 +84,25 @@ async def crowdSourcedThing(upc):
 async def getItemInfo(upc):
     # Get request to that one upc database
     response = requests.get(f"https://api.upcitemdb.com/prod/trial/lookup?upc={upc}")
+    response_json = response.json()
 
     # Reduce response to what we need
     data = {}
-    data['brand'] = response['items'][0]['brand']
-    data['name'] = response['items'][0]['title']
-    data['image'] = response['items'][0]['images'][0]
+
+    if len(response_json['items']) == 0:
+        return {}
+
+    data['brand'] = response_json['items'][0]['brand']
+    data['name'] = response_json['items'][0]['title']
+
+    if len(response_json['items'][0]['images']) == 0:
+        data['image'] = ""
+    else:
+        data['image'] = response_json['items'][0]['images'][0]
 
     return json.dumps(data)
 
 # Add item to cart
-
-# Get cart item list
 
 if __name__ == '__main__':
     openDB()
