@@ -14,22 +14,145 @@
         <br>
         <br>
         <div class = "button1">
-            <button class="button-68" role="button" id = "cartButton" onclick = "Cart()">Open Cart</button>
+            <button class="cartButton" role="button" id = "cartButton" onclick = "Cart()">Open Cart</button>
         </div>
         <br>
         <br>
-        <input type="text" class="textBox">
-        <br>
-        <br>
-        <div id = "change">
-
+        <div id = "change" class = "button1">
+            
         </div>
 
     </body>
     <script>
+        var interval;
         function Cart()
         {
-            document.getElementById('cartButton').innerText = 'bobs';
+            
+            if(document.getElementById('cartButton').innerText == "Open Cart") {
+                document.getElementById('cartButton').innerText = "Close Cart";
+                tableChange();
+                interval = setInterval(tableChange, 1000);
+                
+            } else {
+                document.getElementById('cartButton').innerText = "Open Cart";
+                document.getElementById('change').innerHTML = "";
+                clearInterval(interval);
+            }
+            
+        }
+        function tableChange()
+        {
+            document.getElementById('change').innerHTML = makeTableHTML(updateDatabase());
+        }
+        function updateDatabase() {
+            //query database for cart array, return it
+            var request = new XMLHttpRequest();
+            request.open("GET", "http://api.arianb.me:8000/WholeCart", false);
+            request.send();
+            console.log(request.responseText);
+            var obj = request.responseText;
+            let currParentheses = false;
+            var tempstr = "";
+            var outArray = [], tempArray = [];
+            for(let i = 0; i < obj.length; i++)
+            {
+                if(obj[i] == '(')
+                {
+                    tempstr += obj[i];
+                    currParentheses = true;
+                }
+                else if(currParentheses)
+                {
+                    tempstr += obj[i];
+                }
+                if(obj[i] == ')')
+                {
+                    currParentheses = false;
+                    let j = 1;
+                    let tempstr2 = "";
+                    while(tempstr[j] >= '0' && tempstr[j] <= '9')
+                    {
+                        tempstr2 += tempstr[j];
+                        j++;
+                    }
+                    tempArray.push(tempstr2);
+                    j += 3;
+                    tempstr2 = "";
+                    while(tempstr[j] != '\'')
+                    {
+                        tempstr2 += tempstr[j];
+                        j++;
+                    }
+                    tempstr = "";
+                    tempArray.push(tempstr2);
+                    outArray.push(tempArray);
+                    tempArray = [];
+                }
+            }
+            return outArray;
+        }
+        function makeTableHTML(myArray) {
+            var result = "<table class = \"styled-table\"><thead><tr><th>Average Grade</th><th>Name</th></tr></thead><tbody>";
+            for(var i=0; i<myArray.length; i++) {
+                result += "<tr>";
+                result += "<td style = 'width: 50%; height: 50%;'>" + getImage(myArray[i][0]) + "</td>";
+                result += "<td>" + myArray[i][1] + "</td>";
+                result += "</tr>";
+            }
+            result += "</tbody>";
+            result += "</table>";
+            return result;
+        }
+        function getImage(grade)
+        {
+            var r = "<img src = \""
+            switch(grade) {
+                case '1':
+                    r += "f";
+                    break;
+                case '2':
+                    r += "d-";
+                    break;
+                case '3':
+                    r += "d";
+                    break;
+                case '4':
+                    r += "d+";
+                    break;
+                case '5':
+                    r += "c-";
+                    break;
+                case '6':
+                    r += "c";
+                    break;
+                case '7':
+                    r += "c++";
+                    break;
+                case '8':
+                    r += "b-";
+                    break;
+                case '9':
+                    r += "b";
+                    break;
+                case '10':
+                    r += "b+";
+                    break;
+                case '11':
+                    r += "a-";
+                    break;
+                case '12':
+                    r += "a";
+                    break;
+                case '13':
+                    r += "a+"
+                    break;
+                default:
+                    r += "f";
+                    break;
+            }
+            r += ".png\"";
+            r += "alt = \"\"  class = \"grade\">"
+            return r;
         }
     </script>
 </html>
