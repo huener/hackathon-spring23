@@ -3,6 +3,7 @@
 from fastapi import FastAPI
 import openai
 import psycopg2
+import uvicorn
 
 def openDB():
     global conn
