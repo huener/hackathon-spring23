@@ -150,6 +150,8 @@ public class ShoppingCartActivity extends AppCompatActivity {
 
                 String company_array[] = new String[result_array.length / 4];
 
+                String score_array[] =  new String[result_array.length / 4];
+
                 Log.e("gfhgjkdfjgjkdfngh", String.valueOf(result_array.length));
                 Log.e("gfhgjkdfjgjkdfngh", String.valueOf(company_array.length));
                 int i = 1;
@@ -157,6 +159,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
                 while (i < result_array.length) {
                     try {
                         company_array[j] = result_array[i];
+                        score_array[j] = result_array[i-1];
                         i = i + 4;
                         j++;
                     }
@@ -166,6 +169,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
                 }
 
                 List<String> resultList = new ArrayList<>(Arrays.asList(company_array));
+                List<String> resultList2 = new ArrayList<>(Arrays.asList(score_array));
                 // Add the parsed result to the shopping cart list
                 mShoppingCartList.clear();
                 mShoppingCartList.addAll(resultList);
