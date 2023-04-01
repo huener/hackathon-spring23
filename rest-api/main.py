@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from fastapi import FastAPI
+import requests
 import openai
 import psycopg2
 import uvicorn
@@ -76,8 +77,8 @@ async def crowdSourcedThing(upc):
 @app.get("/getItemInfo/{upc}")
 async def getItemInfo(upc):
     # Get request to that one upc database
-	# store in string
-    return  {"message": f"todo"}
+    response = requests.get(f"https://api.upcitemdb.com/prod/trial/lookup?upc={upc}")
+    return  {"message": f"{response}"}
 
 # Add item to cart
 
