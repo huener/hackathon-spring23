@@ -69,7 +69,7 @@ async def querySustainabilityDB(upc):
     return  {"message": f"todo"}
 
 # TODO
-@app.get("/crowdSourcedThing????/{upc}")
+@app.get("/crowdSourcedThing/{upc}")
 async def crowdSourcedThing(upc):
     return  {"message": f"todo"}
 
@@ -78,7 +78,14 @@ async def crowdSourcedThing(upc):
 async def getItemInfo(upc):
     # Get request to that one upc database
     response = requests.get(f"https://api.upcitemdb.com/prod/trial/lookup?upc={upc}")
-    return  {"message": f"{response}"}
+
+    # Reduce response to what we need
+    data = {}
+    data['brand'] = response['items'][0]['brand']
+    data['name'] = response['items'][0]['title']
+    data['image'] = response['items'][0]['images'][0]
+
+    return data
 
 # Add item to cart
 
