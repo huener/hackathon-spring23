@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
          intentIntegrator = new IntentIntegrator(this);
 
         Button cameraButton = findViewById(R.id.camera_button);
+        ImageButton cartButton = findViewById(R.id.shopping_cart);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,6 +60,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        cartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(MainActivity.this, ShoppingCartActivity.class);
+                MainActivity.this.startActivity(myIntent);
+            }
+        });
+
     }
 
     @Override
@@ -75,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
 
                 Toast.makeText(getBaseContext(), intentResult.getContents(), Toast.LENGTH_LONG).show();
                 Log.i("myapp", intentResult.toString());
-
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
