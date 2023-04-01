@@ -41,11 +41,10 @@ app = FastAPI()
 
 @app.get("/WholeCart")
 async def WholeCart():
-    openDB()
     result = executeSelect('''
                             SELECT * from "Cart"
                             ''')
-    closeDB()
+    return  {"message": f"{result}"}
 
 # Data Sources
 @app.get("/getChatGPTResponse/{product_company}")
@@ -85,4 +84,6 @@ async def getItemInfo(upc):
 # Get cart item list
 
 if __name__ == '__main__':
+    openDB()
     uvicorn.run(app, port=8000, host='0.0.0.0')
+
