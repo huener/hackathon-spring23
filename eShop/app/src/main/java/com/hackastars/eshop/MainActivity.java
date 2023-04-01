@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 // the content of scan message
                 String nums = intentResult.getContents();
 
-                Toast.makeText(getBaseContext(), intentResult.getContents(), Toast.LENGTH_LONG).show();
+                // Toast.makeText(getBaseContext(), intentResult.getContents(), Toast.LENGTH_LONG).show();
                 Log.i("myapp", intentResult.toString());
             }
         } else {
