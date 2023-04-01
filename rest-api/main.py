@@ -40,6 +40,11 @@ def executeUpdate(query, data):  # use this function for delete and update
     conn.commit()
 
 app = FastAPI()
+openDB()
+
+@app.get("/")
+async def root():
+    return {"Welcome to my silly little API"}
 
 @app.get("/WholeCart")
 async def WholeCart():
