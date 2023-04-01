@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from fastapi import FastAPI
 import openai
 import psycopg2
@@ -80,3 +82,6 @@ async def getItemInfo(upc):
 # Add item to cart
 
 # Get cart item list
+
+if __name__ == '__main__':
+    uvicorn.run(app, port=8000, host='0.0.0.0')
