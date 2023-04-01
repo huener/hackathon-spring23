@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -15,8 +16,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.google.zxing.*;
+import com.google.zxing.oned.UPCAReader;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     // Scan stuff
                     intentIntegrator.setPrompt("Scan a barcode");
-                    //intentIntegrator.setOrientationLocked(true);
+                    intentIntegrator.setBeepEnabled(false);
+                    intentIntegrator.setOrientationLocked(false);
                     intentIntegrator.initiateScan();
                 }
             }
@@ -56,13 +63,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            // The image was saved to the device's camera roll
-            // You can retrieve the image data from the Intent's extras
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            // Do something with the imageBitmap, like display it in an ImageView
-        }
 
         IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (intentResult != null) {
@@ -71,7 +71,11 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // if the intentResult is not null we'll set
                 // the content of scan message
+                String nums = intentResult.getContents();
+
                 Toast.makeText(getBaseContext(), intentResult.getContents(), Toast.LENGTH_LONG).show();
+                Log.i("myapp", intentResult.toString());
+
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
