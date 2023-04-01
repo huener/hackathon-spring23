@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import json
 import requests
 import openai
@@ -18,6 +19,22 @@ def openDB():
 
     global cursor
     cursor = conn.cursor()
+
+origins = [
+    "http://api.arianb.me:8000",
+    "*"
+]
+
+app = FastAPI()
+openDB()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def closeDB():
     cursor.close()
@@ -39,8 +56,6 @@ def executeUpdate(query, data):  # use this function for delete and update
     cursor.execute(query, data)
     conn.commit()
 
-app = FastAPI()
-openDB()
 
 @app.get("/")
 async def root():
