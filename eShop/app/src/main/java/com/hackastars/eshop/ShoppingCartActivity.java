@@ -117,7 +117,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
 
                 String result_array[] = result.split(",");
 
-                String company_array[] = new String[100000];
+                String company_array[] = new String[result_array.length / 4];
 
                 Log.e("gfhgjkdfjgjkdfngh", String.valueOf(result_array.length));
                 Log.e("gfhgjkdfjgjkdfngh", String.valueOf(company_array.length));
@@ -134,7 +134,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
                     }
                 }
 
-                List<String> resultList = new ArrayList<>(Arrays.asList(result_array));
+                List<String> resultList = new ArrayList<>(Arrays.asList(company_array));
                 // Add the parsed result to the shopping cart list
                 mShoppingCartList.clear();
                 mShoppingCartList.addAll(resultList);
