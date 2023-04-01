@@ -1,5 +1,6 @@
 package com.hackastars.eshop;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +24,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
+import androidx.recyclerview.widget.ItemTouchHelper;
+
+
 public class ShoppingCartActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
@@ -40,6 +44,33 @@ public class ShoppingCartActivity extends AppCompatActivity {
 
         mAdapter = new ShoppingCartAdapter(mShoppingCartList);
         mRecyclerView.setAdapter(mAdapter);
+
+        // Create an ItemTouchHelper that will handle swipe gestures
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+                0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                // Do nothing - we don't want to move items up or down in the list
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                // Get the position of the item that was swiped
+                int position = viewHolder.getAdapterPosition();
+
+                // Remove the item from the list
+                mShoppingCartList.remove(position);
+
+                // Notify the adapter that an item has been removed
+                mAdapter.notifyItemRemoved(position);
+            }
+        });
+
+// Attach the ItemTouchHelper to the RecyclerView
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
+
 
         // Start the network request
         new NetworkTask().execute();
