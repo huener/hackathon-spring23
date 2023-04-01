@@ -8,21 +8,29 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int CAMERA_PERMISSION_CODE = 100;
 
+    private static IntentIntegrator intentIntegrator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+         intentIntegrator = new IntentIntegrator(this);
 
         Button cameraButton = findViewById(R.id.camera_button);
         cameraButton.setOnClickListener(new View.OnClickListener() {
@@ -36,16 +44,13 @@ public class MainActivity extends AppCompatActivity {
                             new String[] { Manifest.permission.CAMERA },
                             CAMERA_PERMISSION_CODE);
                 } else {
-                    // Open camera if permission is granted
-                    openCamera();
+                    // Scan stuff
+                    intentIntegrator.setPrompt("Scan a barcode");
+                    //intentIntegrator.setOrientationLocked(true);
+                    intentIntegrator.initiateScan();
                 }
             }
         });
-    }
-
-    private void openCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
     }
 
     @Override
@@ -58,6 +63,19 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             // Do something with the imageBitmap, like display it in an ImageView
         }
+
+        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (intentResult != null) {
+            if (intentResult.getContents() == null) {
+                Toast.makeText(getBaseContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+            } else {
+                // if the intentResult is not null we'll set
+                // the content of scan message
+                Toast.makeText(getBaseContext(), intentResult.getContents(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -67,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission granted, open camera
-                openCamera();
+                //openCamera();
             }
         }
     }
