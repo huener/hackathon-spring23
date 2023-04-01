@@ -8,3 +8,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+eShop/.idea/compiler.xml
+eShop/.idea/gradle.xml
+eShop/.idea/vcs.xml
+eShop/.idea/misc.xml
