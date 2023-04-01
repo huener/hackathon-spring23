@@ -54,11 +54,12 @@ async def WholeCart():
     return  {"message": f"{result}"}
 
 # Data Sources
-@app.get("/getChatGPTResponse/{product_company}")
-async def getChatGPTResponse(product_company):
+@app.get("/getChatGPTResponse/")
+async def getChatGPTResponse(upc, company):
     API_KEY="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"
-    prompt = f"On a scale of 1 to 13, what would you rate the sustainability of the company, {product_company}? Answer with only a single number, with nothing else in your response, including punctuation. Your response will only contain a single character. If you cannot access the most up-to-date information, try your best guess."
-    openai.api_key = API_KEY
+    prompt = f"On a scale of 1 to 13, what would you rate the sustainability of the company, {company}? Answer with only a single number, with nothing else in your response, including punctuation. Your response will only contain a single character. If you cannot access the most up-to-date information, try your best guess."
+    file = open("./key.txt", 'r')
+    openai.api_key = file.read()
     response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -88,6 +89,9 @@ async def getItemInfo(upc):
 
     # Reduce response to what we need
     data = {}
+
+    if not 'items' in response_json:
+        return {}
 
     if len(response_json['items']) == 0:
         return {}
