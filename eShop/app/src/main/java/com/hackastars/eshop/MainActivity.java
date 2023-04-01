@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
                     intentIntegrator.setOrientationLocked(false);
                     intentIntegrator.initiateScan();
                 }
+
+
             }
         });
 
@@ -90,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+        Intent myIntent = new Intent(MainActivity.this, ScannedActivityAa.class);
+        MainActivity.this.startActivity(myIntent);
     }
 
     @Override
