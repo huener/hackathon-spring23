@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from fastapi import FastAPI
+import json
 import requests
 import openai
 import psycopg2
@@ -85,7 +86,7 @@ async def getItemInfo(upc):
     data['name'] = response['items'][0]['title']
     data['image'] = response['items'][0]['images'][0]
 
-    return data
+    return json.dumps(data)
 
 # Add item to cart
 
