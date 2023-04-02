@@ -13,3 +13,6 @@ eShop/.idea/gradle.xml
 eShop/.idea/vcs.xml
 eShop/.idea/misc.xml
 eShop/.idea/jarRepositories.xml
+/rest-api/data.json
+/rest-api/key.txt
+/rest-api/__pycache__
