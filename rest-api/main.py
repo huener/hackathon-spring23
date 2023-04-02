@@ -47,7 +47,7 @@ def writeJson():
 def addDBReview(upc, gptgrade, upvotes, downvotes):
     json_db['reviews'].append({
         "upc": upc,
-        "gptgrade": gptgrade,
+        "gptgrade": int(gptgrade),
         "upvotes": upvotes,
         "downvotes": downvotes
     })
@@ -58,7 +58,7 @@ def addDBCartItem(upc, name, link, avg_grade):
         "upc": upc,
         "name": name,
         "link": link,
-        "avg_grade": avg_grade
+        "avg_grade": int(avg_grade)
     })
     writeJson()
 
