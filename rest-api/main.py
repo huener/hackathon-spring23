@@ -6,19 +6,64 @@ import json
 import requests
 import openai
 import psycopg2
+from starlette.requests import empty_receive
 import uvicorn
+import os
 
 def openDB():
-    global conn
-    conn = psycopg2.connect(
-        user="postgres",
-        password="Ie0prHyD9JZS0hM7",
-        host="db.lroakeegvjazrfrsdccb.supabase.co",
-        port="5432"
-    )
+    # Init json file
+    # json_file = open('data.json', 'w')
+    # json_file.write(json.dumps({
+        # "reviews" : [
+        # ],
+        # "cart" : [
+        # ]
+    # }))
+    # json_file.close()
 
-    global cursor
-    cursor = conn.cursor()
+    json_file = open('data.json', 'r')
+    global json_db
+    json_db = json.load(json_file)
+    if not 'reviews' in json_db:
+        json_db['reviews'] = []
+    if not 'cart' in json_db:
+        json_db['cart'] = []
+    json_file.close()
+
+def writeJson():
+    with open('data.json', 'w') as f:
+        json.dump(json_db, f)
+
+def addDBReview(upc, gptgrade, upvotes, downvotes):
+    json_db['reviews'].append({
+        "upc": upc,
+        "gptgrade": gptgrade,
+        "upvotes": upvotes,
+        "downvotes": downvotes
+    })
+    writeJson()
+
+def addDBCartItem(upc, name, link, avg_grade):
+    json_db['cart'].append({
+        "upc": upc,
+        "name": name,
+        "link": link,
+        "avg_grade": avg_grade
+    })
+    writeJson()
+
+def readDBReview(upc):
+    for review in json_db['reviews']:
+        if review['upc'] == upc:
+            return review
+    return {}
+
+def readDBCartItem(upc):
+    for cart_item in json_db['cart']:
+        if cart_item['upc'] == upc:
+            return cart_item
+    return {}
+
 
 origins = [
     "http://api.arianb.me:8000",
@@ -37,25 +82,7 @@ app.add_middleware(
 )
 
 def closeDB():
-    cursor.close()
-    conn.close()
-
-def executeSelect(query):
-    cursor.execute(query)
-    return cursor.fetchall()
-
-def executeSelect2(query, data):
-    cursor.execute(query, data)
-    return cursor.fetchall()
-
-def insert(query, data):
-    cursor.execute(query, data)
-    conn.commit()
-
-def executeUpdate(query, data):  # use this function for delete and update
-    cursor.execute(query, data)
-    conn.commit()
-
+    json_db.close()
 
 @app.get("/")
 async def root():
@@ -63,15 +90,27 @@ async def root():
 
 @app.get("/WholeCart")
 async def WholeCart():
-    result = executeSelect('''
-                            SELECT * from "Cart"
-                            ''')
-    return  {"message": f"{result}"}
+    result = json_db['cart']
+    return_string = "["
+    for cart_item in result:
+        avg_grade = cart_item['avg_grade']
+        name = cart_item['name']
+        link = cart_item['link']
+        upc = cart_item['upc']
+        return_string += f"[{avg_grade}, '{name}', '{link}', {upc}]"
+    return_string += "]"
+    return  {"message": f"{return_string}"}
 
 # Data Sources
 @app.get("/getChatGPTResponse/")
 async def getChatGPTResponse(upc, company):
-    API_KEY="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"
+    result = readDBReview(upc)
+    if result != {}:
+        gpt_rating = result['gptgrade']
+        return  {
+            "message": gpt_rating
+        }
+
     prompt = f"On a scale of 1 to 13, what would you rate the sustainability of the company, {company}? Answer with only a single number, with nothing else in your response, including punctuation. Your response will only contain a single character. If you cannot access the most up-to-date information, try your best guess."
     file = open("./key.txt", 'r')
     openai.api_key = file.read()
@@ -82,22 +121,33 @@ async def getChatGPTResponse(upc, company):
             ]
     )
     grade = response['choices'][0]['message']['content']
+    addDBReview(upc, grade, 0, 0)
     return  {
         "message": grade
     }
 
-@app.get("/querySustainabilityDB/{upc}")
-async def querySustainabilityDB(upc):
-    return  {"message": f"todo"}
 
-# TODO
-@app.get("/crowdSourcedThing/{upc}")
-async def crowdSourcedThing(upc):
-    return  {"message": f"todo"}
+@app.get("/getCrowdSourcedItemData/{upc}")
+async def getCrowdSourcedItemData(upc):
+    result = readDBReview(upc)
+    if result == {}:
+        return  {"rating": f"1"}
+    upvotes = result[0][2]
+    downvotes = result[0][3]
+    score = 0
+    if upvotes + downvotes == 0:
+        score = 0
+    else:
+        score = round(13 * (upvotes / (upvotes + downvotes)))
+    return  {"rating": f"{score}"}
 
 # Get item info
 @app.get("/getItemInfo/{upc}")
 async def getItemInfo(upc):
+    result = readDBCartItem(upc)
+    if result != {}:
+        return json.dumps(result)
+
     # Get request to that one upc database
     response = requests.get(f"https://api.upcitemdb.com/prod/trial/lookup?upc={upc}")
     response_json = response.json()
@@ -111,13 +161,24 @@ async def getItemInfo(upc):
     if len(response_json['items']) == 0:
         return {}
 
-    data['brand'] = response_json['items'][0]['brand']
-    data['name'] = response_json['items'][0]['title']
+    # Get average rating (query sources)
+    crowdSourcedRating = await(getCrowdSourcedItemData(upc))
+    brand = response_json['items'][0]['brand']
+    gpt_rating = await(getChatGPTResponse(upc, brand))
+
+    average_rating = (int(crowdSourcedRating["rating"]) + int(gpt_rating['message']))/2
+
+    data['average_rating'] = average_rating
+    brand_name = brand
+    product_name = response_json['items'][0]['title']
+    data['name'] = f"{brand_name} {product_name}"
 
     if len(response_json['items'][0]['images']) == 0:
         data['image'] = ""
     else:
         data['image'] = response_json['items'][0]['images'][0]
+    data['upc'] = upc
+    addDBCartItem(upc, data['name'], data['image'], average_rating)
 
     return json.dumps(data)
 
