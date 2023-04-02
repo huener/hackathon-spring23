@@ -100,16 +100,7 @@ async def root():
 
 @app.get("/WholeCart")
 async def WholeCart():
-    result = json_db['cart']
-    return_string = "["
-    for cart_item in result:
-        avg_grade = cart_item['avg_grade']
-        name = cart_item['name']
-        link = cart_item['link']
-        upc = cart_item['upc']
-        return_string += f"[{avg_grade}, '{name}', '{link}', {upc}]"
-    return_string += "]"
-    return  {"message": f"{return_string}"}
+    return  {"message": json_db['cart']}
 
 # Data Sources
 @app.get("/getChatGPTResponse/")
