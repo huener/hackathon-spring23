@@ -49,54 +49,18 @@
             var request = new XMLHttpRequest();
             request.open("GET", "http://api.arianb.me:8000/WholeCart", false);
             request.send();
-            console.log(request.responseText);
-            var obj = request.responseText;
-            let currParentheses = false;
-            var tempstr = "";
-            var outArray = [], tempArray = [];
-            for(let i = 0; i < obj.length; i++)
-            {
-                if(obj[i] == '(')
-                {
-                    tempstr += obj[i];
-                    currParentheses = true;
-                }
-                else if(currParentheses)
-                {
-                    tempstr += obj[i];
-                }
-                if(obj[i] == ')')
-                {
-                    currParentheses = false;
-                    let j = 1;
-                    let tempstr2 = "";
-                    while(tempstr[j] >= '0' && tempstr[j] <= '9')
-                    {
-                        tempstr2 += tempstr[j];
-                        j++;
-                    }
-                    tempArray.push(tempstr2);
-                    j += 3;
-                    tempstr2 = "";
-                    while(tempstr[j] != '\'')
-                    {
-                        tempstr2 += tempstr[j];
-                        j++;
-                    }
-                    tempstr = "";
-                    tempArray.push(tempstr2);
-                    outArray.push(tempArray);
-                    tempArray = [];
-                }
-            }
-            return outArray;
+
+            console.log(request.responseText); // DEBUG
+            var response = JSON.parse(request.responseText);
+            return response;
         }
+
         function makeTableHTML(myArray) {
             var result = "<table class = \"styled-table\"><thead><tr><th>Average Grade</th><th>Name</th></tr></thead><tbody>";
-            for(var i=0; i<myArray.length; i++) {
+            for(var i = 0; i < myArray.length; i++) {
                 result += "<tr>";
-                result += "<td style = 'width: 50%; height: 50%;'>" + getImage(myArray[i][0]) + "</td>";
-                result += "<td>" + myArray[i][1] + "</td>";
+                result += "<td style = 'width: 50%; height: 50%;'>" + getImage(myArray[i]['avg_grade']) + "</td>";
+                result += "<td>" + myArray[i]['name'] + "</td>";
                 result += "</tr>";
             }
             result += "</tbody>";
@@ -105,45 +69,46 @@
         }
         function getImage(grade)
         {
+            console.log(grade); // DEBUG
             var r = "<img src = \""
             switch(grade) {
-                case '1':
+                case 1:
                     r += "f";
                     break;
-                case '2':
+                case 2:
                     r += "d-";
                     break;
-                case '3':
+                case 3:
                     r += "d";
                     break;
-                case '4':
+                case 4:
                     r += "d+";
                     break;
-                case '5':
+                case 5:
                     r += "c-";
                     break;
-                case '6':
+                case 6:
                     r += "c";
                     break;
-                case '7':
+                case 7:
                     r += "c++";
                     break;
-                case '8':
+                case 8:
                     r += "b-";
                     break;
-                case '9':
+                case 9:
                     r += "b";
                     break;
-                case '10':
+                case 10:
                     r += "b+";
                     break;
-                case '11':
+                case 11:
                     r += "a-";
                     break;
-                case '12':
+                case 12:
                     r += "a";
                     break;
-                case '13':
+                case 13:
                     r += "a+"
                     break;
                 default:

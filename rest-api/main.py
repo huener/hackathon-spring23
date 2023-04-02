@@ -133,8 +133,8 @@ async def getCrowdSourcedItemData(upc):
     result = readDBReview(upc)
     if result == {}:
         return  {"rating": f"1"}
-    upvotes = result[0][2]
-    downvotes = result[0][3]
+    upvotes = result['upvotes']
+    downvotes = result['downvotes']
     score = 0
     if upvotes + downvotes == 0:
         score = 0
