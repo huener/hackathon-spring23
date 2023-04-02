@@ -100,7 +100,7 @@ async def root():
 
 @app.get("/WholeCart")
 async def WholeCart():
-    return  {"message": json_db['cart']}
+    return  json_db['cart']
 
 # Data Sources
 @app.get("/getChatGPTResponse/")
