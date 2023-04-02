@@ -10,24 +10,34 @@ from starlette.requests import empty_receive
 import uvicorn
 import os
 
-def openDB():
-    # Init json file
-    # json_file = open('data.json', 'w')
-    # json_file.write(json.dumps({
-        # "reviews" : [
-        # ],
-        # "cart" : [
-        # ]
-    # }))
-    # json_file.close()
+DB_FILE_NAME = 'data.json'
 
+def initJsonDB():
+    # Init json file
+    json_file = open(DB_FILE_NAME, 'w')
+    json_file.write(json.dumps({
+        "reviews" : [],
+        "cart" : []
+    }))
+    json_file.close()
+
+def openDB():
+    try:
+        with open(DB_FILE_NAME,"r") as f:
+            # Check that file is valid json
+            # and contains 'reviews' and 'cart'
+            json_thing = json.load(f)
+            if 'reviews' not in json_thing:
+                initJsonDB()
+            elif 'cart' not in json_thing:
+                initJsonDB()
+    except IOError:
+        initJsonDB()
+
+    # Load json file
     json_file = open('data.json', 'r')
     global json_db
     json_db = json.load(json_file)
-    if not 'reviews' in json_db:
-        json_db['reviews'] = []
-    if not 'cart' in json_db:
-        json_db['cart'] = []
     json_file.close()
 
 def writeJson():
