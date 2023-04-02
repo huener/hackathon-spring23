@@ -3,10 +3,7 @@ package com.hackastars.eshop;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -17,13 +14,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.zxing.common.HybridBinarizer;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpResponse;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.methods.HttpGet;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.CloseableHttpClient;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.DefaultHttpClient;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.google.zxing.*;
-import com.google.zxing.oned.UPCAReader;
 
-import java.util.Arrays;
+import java.io.IOException;
+
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Enable logging
+        Timber.plant(new Timber.DebugTree());
 
          intentIntegrator = new IntentIntegrator(this);
 
@@ -84,10 +87,21 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // if the intentResult is not null we'll set
                 // the content of scan message
-                String nums = intentResult.getContents();
+                String barcodeNums = intentResult.getContents();
+                CloseableHttpClient httpclient = new DefaultHttpClient();
+                HttpGet httppost = new HttpGet("http://api.arianb.me:8000/getItemInfo/" + barcodeNums);
+                new Thread(() -> {
+                    try {
+                        HttpResponse response = httpclient.execute(httppost);
+                        httpclient.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+
 
                 // Toast.makeText(getBaseContext(), intentResult.getContents(), Toast.LENGTH_LONG).show();
-                Log.i("myapp", intentResult.toString());
+                Timber.i(intentResult.toString());
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

@@ -1,31 +1,29 @@
 package com.hackastars.eshop;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.AsyncTask;
-import android.util.Log;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-
-import androidx.recyclerview.widget.ItemTouchHelper;
+import timber.log.Timber;
 
 
 public class ShoppingCartActivity extends AppCompatActivity {
@@ -35,8 +33,6 @@ public class ShoppingCartActivity extends AppCompatActivity {
     private List<String> mShoppingCartList;
 
     private List<String> mShoppingCartList2;
-
-    private ShoppingCartAdapter mAdapter2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +45,6 @@ public class ShoppingCartActivity extends AppCompatActivity {
         mShoppingCartList2 = new ArrayList<>();
 
         mAdapter = new ShoppingCartAdapter(mShoppingCartList);
-        mAdapter2 = new ShoppingCartAdapter(mShoppingCartList2);
         mRecyclerView.setAdapter(mAdapter);
 
         // Create an ItemTouchHelper that will handle swipe gestures
@@ -75,7 +70,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
             }
         });
 
-// Attach the ItemTouchHelper to the RecyclerView
+        // Attach the ItemTouchHelper to the RecyclerView
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
 
@@ -136,7 +131,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
         protected String doInBackground(Void... voids) {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
-                    .url("http://158.101.11.38:8000/WholeCart")
+                    .url("http://api.arianb.me:8000/WholeCart")
                     .build();
 
             try {
@@ -164,15 +159,14 @@ public class ShoppingCartActivity extends AppCompatActivity {
                 result = result.replace("\"", "");
                 result = result.substring(8);
 
+                String[] result_array = result.split(",");
 
-                String result_array[] = result.split(",");
+                String[] company_array = new String[result_array.length / 4];
 
-                String company_array[] = new String[result_array.length / 4];
+                String[] score_array =  new String[result_array.length / 4];
 
-                String score_array[] =  new String[result_array.length / 4];
-
-                Log.e("gfhgjkdfjgjkdfngh", String.valueOf(result_array.length));
-                Log.e("gfhgjkdfjgjkdfngh", String.valueOf(company_array.length));
+                Timber.e(String.valueOf(result_array.length));
+                Timber.e(String.valueOf(company_array.length));
                 int i = 1;
                 int j = 0;
                 while (i < result_array.length) {
@@ -197,7 +191,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
                 // Notify the adapter that the data has changed
                 mAdapter.notifyDataSetChanged();
             } else {
-                Log.e("gjkfldhjkfla", "FAIL LOL");
+                Timber.e("FAIL LOL");
             }
         }
     }
