@@ -8,8 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 
-import timber.log.Timber;
-
 
 public class ScannedActivity extends AppCompatActivity {
 	private String upc;
@@ -48,12 +46,12 @@ public class ScannedActivity extends AppCompatActivity {
 		}
 
 		if (averageRating != -1) {
-			averageGradeImage.setImageResource(getGradeImageName());
+			averageGradeImage.setImageResource(getGradeResource(averageRating));
 		}
 	}
 
-	private int getGradeImageName() {
-		switch (averageRating) {
+	public static int getGradeResource(int grade) {
+		switch (grade) {
 			case 1:
 				return R.drawable.f;
 			case 2:

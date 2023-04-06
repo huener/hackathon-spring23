@@ -34,7 +34,7 @@
         android:layout_marginEnd="350dp"
         android:scaleX="1"
         android:scaleY="1"
-        android:src="@drawable/c_plus_plus"
+        android:src="@drawable/question_mark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.266"

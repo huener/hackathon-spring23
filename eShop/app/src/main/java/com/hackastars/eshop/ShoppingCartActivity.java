@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,10 +97,12 @@ public class ShoppingCartActivity extends AppCompatActivity {
 
         public class ShoppingCartViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             public TextView itemNameTextView;
+            public ImageView gradeImageView;
 
             public ShoppingCartViewHolder(View itemView) {
                 super(itemView);
                 itemNameTextView = itemView.findViewById(R.id.item_name);
+                gradeImageView = itemView.findViewById(R.id.ratingIcon);
                 itemView.setOnClickListener(this);
             }
 
@@ -122,6 +125,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
         public void onBindViewHolder(ShoppingCartViewHolder holder, int position) {
             Product product = mDataList.get(position);
             holder.itemNameTextView.setText(product.getName());
+            holder.gradeImageView.setImageResource(ScannedActivity.getGradeResource(product.getAverageGrade()));
         }
 
         @Override
