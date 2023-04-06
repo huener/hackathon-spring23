@@ -53,12 +53,12 @@ def addDBReview(upc, gptgrade, upvotes, downvotes):
     })
     writeJson()
 
-def addDBCartItem(upc, name, imageLink, avg_grade):
+def addDBCartItem(upc, name, imageLink, average_rating):
     json_db['cart'].append({
         "upc": upc,
         "name": name,
         "image": imageLink,
-        "avg_grade": int(avg_grade)
+        "average_rating": int(average_rating)
     })
     writeJson()
 

@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("upc", json.getString("upc"));
                             intent.putExtra("name", json.getString("name"));
                             intent.putExtra("imageLink", json.getString("image"));
-                            intent.putExtra("averageGrade", json.getInt("avg_grade"));
+                            intent.putExtra("averageGrade", json.getInt("average_rating"));
                         } catch (JSONException e) {
                             intent.putExtra("upc", upc);
                             Timber.e(e);

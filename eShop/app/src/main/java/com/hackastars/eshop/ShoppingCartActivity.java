@@ -194,7 +194,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
                         String upc = item.getString("upc");
                         String name = item.getString("name");
                         String imageLink = item.getString("image");
-                        int averageGrade = item.getInt("avg_grade");
+                        int averageGrade = item.getInt("average_rating");
 
                         Product temp = new Product(upc, name, imageLink, averageGrade);
                         resultList.add(temp);
