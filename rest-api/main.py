@@ -62,6 +62,20 @@ def addDBCartItem(upc, name, link, avg_grade):
     })
     writeJson()
 
+def removeDBReview(upc):
+    for review in json_db['reviews'][:]:
+        if review['upc'] == upc:
+            json_db['reviews'].remove(review)
+            break
+    writeJson()
+
+def removeDBCartItem(upc):
+    for cart_item in json_db['cart'][:]:
+        if cart_item['upc'] == upc:
+            json_db['cart'].remove(cart_item)
+            break
+    writeJson()
+
 def readDBReview(upc):
     for review in json_db['reviews']:
         if review['upc'] == upc:
@@ -182,6 +196,16 @@ async def getItemInfo(upc):
     addDBCartItem(upc, data['name'], data['image'], average_rating)
 
     return json.dumps(data)
+
+@app.get("/removeItem/{upc}")
+async def removeItem(upc):
+    removeDBCartItem(upc)
+    return { "status": "0" }
+
+@app.get("/removeItemReview/{upc}")
+async def removeItemReview(upc):
+    removeDBReview(upc)
+    return { "status": "0" }
 
 # Add item to cart
 

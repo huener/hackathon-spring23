@@ -1,5 +1,7 @@
 package com.hackastars.eshop;
 
+import static com.hackastars.eshop.MainActivity.API_ENDPOINT;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,6 +32,11 @@ import okhttp3.ResponseBody;
 import timber.log.Timber;
 
 import androidx.recyclerview.widget.ItemTouchHelper;
+
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpResponse;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.methods.HttpGet;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.CloseableHttpClient;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.DefaultHttpClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,10 +76,21 @@ public class ShoppingCartActivity extends AppCompatActivity {
                 // Get the position of the item that was swiped
                 int position = viewHolder.getAdapterPosition();
 
+                // remove from cart
+                Product item = mShoppingCartList.get(position);
+                CloseableHttpClient httpclient = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(String.format("%s/removeItem/%s", API_ENDPOINT, item.getUpc()));
+                new Thread(() -> {
+                    try {
+                        HttpResponse response = httpclient.execute(httpGet);
+                        httpclient.close();
+                    } catch (IOException e) {
+                        Timber.e(e);
+                    }
+                }).start();
+
                 // Remove the item from the list
                 mShoppingCartList.remove(position);
-
-                // TODO: remove from cart
 
                 // Notify the adapter that an item has been removed
                 mAdapter.notifyItemRemoved(position);
@@ -148,7 +166,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
         protected String doInBackground(Void... voids) {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
-                    .url(String.format("%s/WholeCart", MainActivity.API_ENDPOINT))
+                    .url(String.format("%s/WholeCart", API_ENDPOINT))
                     .build();
 
             try {
