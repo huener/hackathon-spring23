@@ -133,7 +133,6 @@ public class ShoppingCartActivity extends AppCompatActivity {
                 intent.putExtra("name", product.getName());
                 intent.putExtra("imageLink", product.getImageLink());
                 intent.putExtra("averageGrade", product.getAverageGrade());
-                Timber.d("avg grade: %s", product.getAverageGrade());
                 startActivity(intent);
             }
         }
@@ -194,7 +193,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
                         JSONObject item = cart.getJSONObject(i);
                         String upc = item.getString("upc");
                         String name = item.getString("name");
-                        String imageLink = item.getString("link");
+                        String imageLink = item.getString("image");
                         int averageGrade = item.getInt("avg_grade");
 
                         Product temp = new Product(upc, name, imageLink, averageGrade);
