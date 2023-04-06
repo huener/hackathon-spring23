@@ -1,22 +1,25 @@
 package com.hackastars.eshop;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -25,14 +28,18 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import timber.log.Timber;
 
+import androidx.recyclerview.widget.ItemTouchHelper;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class ShoppingCartActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private ShoppingCartAdapter mAdapter;
-    private List<String> mShoppingCartList;
-
-    private List<String> mShoppingCartList2;
+    private List<Product> mShoppingCartList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +49,6 @@ public class ShoppingCartActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.shopping_cart_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mShoppingCartList = new ArrayList<>();
-        mShoppingCartList2 = new ArrayList<>();
 
         mAdapter = new ShoppingCartAdapter(mShoppingCartList);
         mRecyclerView.setAdapter(mAdapter);
@@ -65,6 +71,8 @@ public class ShoppingCartActivity extends AppCompatActivity {
                 // Remove the item from the list
                 mShoppingCartList.remove(position);
 
+                // TODO: remove from cart
+
                 // Notify the adapter that an item has been removed
                 mAdapter.notifyItemRemoved(position);
             }
@@ -80,9 +88,9 @@ public class ShoppingCartActivity extends AppCompatActivity {
 
     private class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapter.ShoppingCartViewHolder> {
 
-        private List<String> mDataList;
+        private final List<Product> mDataList;
 
-        public ShoppingCartAdapter(List<String> dataList) {
+        public ShoppingCartAdapter(List<Product> dataList) {
             mDataList = dataList;
         }
 
@@ -98,18 +106,22 @@ public class ShoppingCartActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 int position = getAdapterPosition();
-                String itemName = mDataList.get(position);
-                Intent intent = new Intent(view.getContext(), ScannedActivityAa.class);
-                intent.putExtra("itemName", itemName);
-                view.getContext().startActivity(intent);
+                Product product = mDataList.get(position);
+                Intent intent = new Intent(view.getContext(), ScannedActivity.class);
+                intent.putExtra("upc", product.getUpc());
+                intent.putExtra("name", product.getName());
+                intent.putExtra("imageLink", product.getImageLink());
+                intent.putExtra("averageGrade", product.getAverageGrade());
+                Timber.d("avg grade: %s", product.getAverageGrade());
+                startActivity(intent);
             }
         }
 
 
         @Override
         public void onBindViewHolder(ShoppingCartViewHolder holder, int position) {
-            String itemName = mDataList.get(position);
-            holder.itemNameTextView.setText(itemName);
+            Product product = mDataList.get(position);
+            holder.itemNameTextView.setText(product.getName());
         }
 
         @Override
@@ -117,6 +129,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
             return mDataList.size();
         }
 
+        @NonNull
         @Override
         public ShoppingCartViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shopping_cart, parent, false);
@@ -131,7 +144,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
         protected String doInBackground(Void... voids) {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
-                    .url("http://api.arianb.me:8000/WholeCart")
+                    .url(String.format("%s/WholeCart", MainActivity.API_ENDPOINT))
                     .build();
 
             try {
@@ -141,6 +154,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
                     return responseBody.string();
                 }
             } catch (IOException e) {
+                Toast.makeText(getApplicationContext(), "Failed to load data", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
 
@@ -150,43 +164,28 @@ public class ShoppingCartActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-                result = result.replace("{", "");
-                result = result.replace("}", "");
-                result = result.replace("[", "");
-                result = result.replace("]", "");
-                result = result.replace("'", "");
-                result = result.replace("(", "");
-                result = result.replace("\"", "");
-                result = result.substring(8);
+                List<Product> resultList = new ArrayList<>();
+                try {
+                    JSONArray cart;
+                    cart = new JSONArray(result);
+                    for (int i = 0; i < cart.length(); i++) {
+                        JSONObject item = cart.getJSONObject(i);
+                        String upc = item.getString("upc");
+                        String name = item.getString("name");
+                        String imageLink = item.getString("link");
+                        int averageGrade = item.getInt("avg_grade");
 
-                String[] result_array = result.split(",");
-
-                String[] company_array = new String[result_array.length / 4];
-
-                String[] score_array =  new String[result_array.length / 4];
-
-                Timber.e(String.valueOf(result_array.length));
-                Timber.e(String.valueOf(company_array.length));
-                int i = 1;
-                int j = 0;
-                while (i < result_array.length) {
-                    try {
-                        company_array[j] = result_array[i];
-                        score_array[j] = result_array[i-1];
-                        i = i + 4;
-                        j++;
+                        Product temp = new Product(upc, name, imageLink, averageGrade);
+                        resultList.add(temp);
                     }
-                    catch(Exception e){
-                        break;
-                    }
+                } catch (JSONException e) {
+                    Timber.e(e);
+                    return;
                 }
 
-                List<String> resultList = new ArrayList<>(Arrays.asList(company_array));
-                List<String> resultList2 = new ArrayList<>(Arrays.asList(score_array));
                 // Add the parsed result to the shopping cart list
                 mShoppingCartList.clear();
                 mShoppingCartList.addAll(resultList);
-                mShoppingCartList2.addAll(resultList2);
 
                 // Notify the adapter that the data has changed
                 mAdapter.notifyDataSetChanged();

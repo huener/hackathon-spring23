@@ -31,11 +31,14 @@ android {
     }
 }
 
+// TODO: we have lots of dependencies bc we were just trying to get things working for the hackathon
+//       we should figure out what dependencies are unused
 dependencies {
     // define a BOM and its version
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.10.0"))
     implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
 
     // define any required OkHttp artifacts without version
     implementation("com.squareup.okhttp3:okhttp")

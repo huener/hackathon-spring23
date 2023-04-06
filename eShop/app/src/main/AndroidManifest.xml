@@ -16,7 +16,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".ScannedActivityAa"
+            android:name=".ScannedActivity"
             android:exported="false"
             android:label="@string/title_activity_scanned_aa"
             android:theme="@style/Theme.EShop.NoActionBar">

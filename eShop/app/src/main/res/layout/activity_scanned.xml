@@ -9,27 +9,91 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/itemName"
-        android:layout_width="wrap_content"
+        android:id="@+id/itemNameTextView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
+        android:breakStrategy="balanced"
         android:fontFamily="@font/roboto_thin"
-        android:text="Monster Energy"
+        android:gravity="center_horizontal"
+        android:text=""
         android:textColor="#F5F5F5"
-        android:textSize="40sp"
+        app:autoSizeMaxTextSize="40sp"
+        app:autoSizeMinTextSize="25sp"
+        app:autoSizeStepGranularity="2sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageGrade"
+        android:id="@+id/averageGradeImageView"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/productImage"
+        app:layout_constraintEnd_toStartOf="@+id/productImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/productImage"
+        app:srcCompat="@drawable/question_mark" />
+
+    <ImageView
+        android:id="@+id/productImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/scoreOur"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/averageGradeImageView"
+        app:layout_constraintTop_toBottomOf="@+id/itemNameTextView"
+        app:srcCompat="@drawable/question_mark" />
+
+    <ImageView
+        android:id="@+id/appIconImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="@+id/scoreOur"
         app:layout_constraintEnd_toEndOf="@+id/buttonUp"
         app:layout_constraintStart_toStartOf="@+id/buttonUp"
-        app:layout_constraintTop_toBottomOf="@+id/itemName"
-        app:srcCompat="@drawable/a" />
+        app:layout_constraintTop_toTopOf="@+id/scoreOur"
+        app:srcCompat="@drawable/eshop_logo" />
+
+    <ImageView
+        android:id="@+id/userIconImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="@+id/scoreOur2"
+        app:layout_constraintEnd_toEndOf="@+id/buttonUp"
+        app:layout_constraintStart_toStartOf="@+id/buttonUp"
+        app:layout_constraintTop_toTopOf="@+id/scoreOur2"
+        app:srcCompat="@drawable/usericon" />
+
+    <TextView
+        android:id="@+id/scoreOur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:fontFamily="@font/roboto_thin"
+        android:text="\?"
+        android:textColor="#F5F5F5"
+        android:textSize="50sp"
+        app:layout_constraintEnd_toEndOf="@+id/buttonDown"
+        app:layout_constraintStart_toStartOf="@+id/buttonDown"
+        app:layout_constraintTop_toBottomOf="@+id/averageGradeImageView" />
+
+    <TextView
+        android:id="@+id/scoreOur2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:fontFamily="@font/roboto_thin"
+        android:text="\?"
+        android:textColor="#F5F5F5"
+        android:textSize="50sp"
+        app:layout_constraintEnd_toEndOf="@+id/scoreOur"
+        app:layout_constraintStart_toStartOf="@+id/scoreOur"
+        app:layout_constraintTop_toBottomOf="@+id/scoreOur" />
 
     <Button
         android:id="@+id/buttonUp"
@@ -39,10 +103,9 @@
         android:layout_marginEnd="200dp"
         android:layout_marginBottom="20dp"
         android:backgroundTint="#A9C52F"
-        android:textSize="40sp"
         app:icon="@android:drawable/arrow_up_float"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/itemName"
+        app:layout_constraintEnd_toEndOf="@+id/itemNameTextView"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -53,67 +116,9 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:backgroundTint="#A9C52F"
-        android:textSize="50sp"
         app:icon="@android:drawable/arrow_down_float"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/itemName" />
-
-    <TextView
-        android:id="@+id/scoreOur"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
-        android:fontFamily="@font/roboto_thin"
-        android:text="A+"
-        android:textColor="#F5F5F5"
-        android:textSize="50sp"
-        app:layout_constraintEnd_toEndOf="@+id/buttonDown"
-        app:layout_constraintStart_toStartOf="@+id/buttonDown"
-        app:layout_constraintTop_toBottomOf="@+id/imageGrade" />
-
-    <TextView
-        android:id="@+id/scoreOur2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:fontFamily="@font/roboto_thin"
-        android:text="90%"
-        android:textColor="#F5F5F5"
-        android:textSize="50sp"
-        app:layout_constraintEnd_toEndOf="@+id/scoreOur"
-        app:layout_constraintStart_toStartOf="@+id/scoreOur"
-        app:layout_constraintTop_toBottomOf="@+id/scoreOur" />
-
-    <ImageView
-        android:id="@+id/imageItem"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/scoreOur"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageGrade"
-        app:layout_constraintTop_toBottomOf="@+id/itemName"
-        app:srcCompat="@drawable/a_minus" />
-
-    <ImageView
-        android:id="@+id/imageOurs"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:layout_constraintBottom_toBottomOf="@+id/scoreOur"
-        app:layout_constraintEnd_toEndOf="@+id/buttonUp"
-        app:layout_constraintStart_toStartOf="@+id/buttonUp"
-        app:layout_constraintTop_toTopOf="@+id/scoreOur"
-        app:srcCompat="@drawable/b" />
-
-    <ImageView
-        android:id="@+id/imageView8"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:layout_constraintBottom_toBottomOf="@+id/scoreOur2"
-        app:layout_constraintEnd_toEndOf="@+id/buttonUp"
-        app:layout_constraintStart_toStartOf="@+id/buttonUp"
-        app:layout_constraintTop_toTopOf="@+id/scoreOur2"
-        app:srcCompat="@drawable/c_plus_plus" />
+        app:layout_constraintStart_toStartOf="@+id/itemNameTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
