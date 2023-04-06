@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                         jsonString = jsonString.replace("\\", "");
                         jsonString = jsonString.substring(jsonString.indexOf("{"), jsonString.lastIndexOf("}") + 1);
 
-                        Timber.d("jsonString: %s", jsonString);
+                        Timber.d(jsonString);
 
                         Intent intent = new Intent(MainActivity.this, ScannedActivity.class);
                         try {
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject json = new JSONObject(jsonString);
                             intent.putExtra("upc", json.getString("upc"));
                             intent.putExtra("name", json.getString("name"));
-                            intent.putExtra("imageLink", json.getString("link"));
+                            intent.putExtra("imageLink", json.getString("image"));
                             intent.putExtra("averageGrade", json.getInt("avg_grade"));
                         } catch (JSONException e) {
                             intent.putExtra("upc", upc);
